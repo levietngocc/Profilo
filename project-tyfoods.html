@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>LVN° | TY FOODS WEB ORDER</title>
+
+    <link rel="icon" type="image/jpeg" href="logo.jpg">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', monospace; background: #030303; scrollbar-width: thin; }
+        body::-webkit-scrollbar { width: 5px; }
+        body::-webkit-scrollbar-track { background: #0a0a0a; }
+        body::-webkit-scrollbar-thumb { background: #2e2e2e; border-radius: 10px; }
+        .bg-grain { background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.035'/%3E%3C/svg%3E"); }
+        .vertical-text { writing-mode: vertical-rl; transform: rotate(180deg); letter-spacing: 0.2em; }
+        .glow-border { background: rgba(5,5,5,0.65); backdrop-filter: blur(8px); border-radius: 24px; border: 1px solid rgba(75,85,99,0.5); transition: all 0.3s ease; }
+        .scanline { pointer-events: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: repeating-linear-gradient(0deg, rgba(0,0,0,0.02) 0px, rgba(0,0,0,0.02) 2px, transparent 2px, transparent 6px); z-index: 40; }
+        
+        .main-header {
+            position: fixed;
+            top: 1.5rem;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+            padding: 0 1.5rem;
+        }
+        .header-left { flex-shrink: 0; }
+        .header-center { flex: 1; display: flex; justify-content: center; }
+        .header-right { flex-shrink: 0; display: flex; align-items: center; gap: 1rem; }
+        .top-menu {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.25rem;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(8px);
+            border-radius: 40px;
+            padding: 0.25rem 0.5rem;
+            border: 1px solid #2a2a2a;
+        }
+        .top-menu a {
+            padding: 0.4rem 0.9rem;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            letter-spacing: 0.03em;
+            transition: all 0.2s;
+            color: #9ca3af;
+            white-space: nowrap;
+            text-decoration: none;
+        }
+        .top-menu a:hover { background: rgba(255,255,255,0.08); color: white; }
+        .top-menu a.active { background: rgba(255,255,255,0.12); color: white; }
+        
+        @media (max-width: 768px) {
+            .main-header { position: relative; top: 0; flex-direction: column; align-items: stretch; margin-bottom: 1rem; padding-top: 1rem; }
+            .header-center { order: 3; margin-top: 0.5rem; }
+            .top-menu { justify-content: center; flex-wrap: wrap; }
+        }
+
+        main {
+            padding-top: 180px !important;
+            padding-bottom: 100px !important;
+        }
+        @media (min-width: 1024px) {
+            main {
+                padding-top: 220px !important;
+            }
+        }
+        @media (max-width: 768px) {
+            main {
+                padding-top: 20px !important;
+            }
+        }
+        
+        .project-card {
+            background: rgba(17,19,24,0.8);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(75,85,99,0.3);
+            border-radius: 28px;
+            transition: all 0.2s;
+        }
+        .project-card:hover { border-color: #00e5ff; }
+        .tech-badge {
+            background: #1e2330;
+            color: #9aa3b8;
+            border-radius: 40px;
+            padding: 0.2rem 1rem;
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+        .screenshot-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        .screenshot-item {
+            background: #0a0c10;
+            border: 1px solid #2a2f3d;
+            border-radius: 16px;
+            overflow: hidden;
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+        .screenshot-item:hover {
+            transform: translateY(-5px);
+            border-color: #69ffb4;
+        }
+        .screenshot-item img { width: 100%; height: auto; display: block; }
+        .screenshot-caption { font-size: 0.65rem; text-align: center; padding: 0.5rem; color: #636e87; background: #0d0f14; }
+
+        .image-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+        .image-modal.active { display: flex; }
+        .image-modal img {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 16px;
+            border: 1px solid #00e5ff;
+            box-shadow: 0 0 40px rgba(0,229,255,0.2);
+        }
+        .modal-close {
+            position: absolute;
+            top: 30px;
+            right: 40px;
+            font-size: 2.5rem;
+            color: white;
+            cursor: pointer;
+            background: rgba(0,0,0,0.5);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+        }
+        .modal-close:hover {
+            background: #00e5ff;
+            color: black;
+            transform: scale(1.1);
+        }
+        .demo-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255,51,51,0.1);
+            border: 1px solid #ff6b6b;
+            color: #ff6b6b;
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            transition: 0.2s;
+        }
+        .demo-link:hover {
+            background: rgba(255,51,51,0.2);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="bg-black text-gray-200 antialiased overflow-x-hidden relative">
+
+    <div class="fixed inset-0 z-0 bg-grain opacity-40 pointer-events-none"></div>
+    <div class="fixed inset-0 z-0 bg-[radial-gradient(circle_at_30%_10%,_rgba(30,30,40,0.4),transparent_70%)] pointer-events-none"></div>
+    <div class="scanline"></div>
+
+    <header class="main-header">
+        <div class="header-left">
+            <div class="group cursor-pointer">
+                <p class="text-white font-bold text-base lg:text-xl tracking-wide">LE VIET NGOC</p>
+                <p id="brand-sub" class="text-gray-400 text-[11px] lg:text-xs tracking-[0.2em] uppercase mt-0.5">IT DIGITALIZATION / SOFTWARE ENGINEER</p>
+                <div class="w-8 h-px bg-gray-700 group-hover:w-12 transition-all duration-300 mt-2"></div>
+            </div>
+        </div>
+        <div class="header-center">
+            <div class="top-menu">
+                <a href="index.html" data-i18n="menu01">01 THE SHIFT</a>
+                <a href="experience.html" data-i18n="menu02">02 EXPERTISE</a>
+                <a href="project-crm.html" data-i18n="menu03">03 E‑COMMERCE CRM</a>
+                <a href="project-repair.html" data-i18n="menu04">04 REPAIR SYS</a>
+                <a href="project-tyfoods.html" class="active" data-i18n="menu05">05 TY FOODS</a>
+                <a href="Html.html" data-i18n="menu06">06 CHEATSHEET</a>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="flex gap-3 text-xs lg:text-sm font-mono">
+                <span class="text-gray-300 border-b border-gray-600 pb-0.5">#HARDWARE</span>
+                <span class="text-gray-500 hover:text-gray-300 transition">#SOFTWARE</span>
+            </div>
+            <button id="lang-toggle" onclick="toggleLanguage()" class="border border-gray-700 bg-black/40 backdrop-blur-md px-3 py-1.5 lg:px-4 lg:py-2 rounded-full text-xs font-mono tracking-wider hover:border-gray-400 transition-all duration-300 shadow-lg">
+                <span class="text-white font-semibold">[ EN ]</span> <span class="text-gray-500">/ VI</span>
+            </button>
+        </div>
+    </header>
+
+    <div class="hidden lg:block fixed left-8 top-1/2 -translate-y-1/2 z-20 vertical-text uppercase tracking-[0.8em] text-gray-800 text-sm font-bold mix-blend-difference">PORTFOLIO</div>
+    <div class="hidden lg:block fixed right-8 top-1/2 -translate-y-1/2 z-20 text-gray-700 text-xs font-mono">
+        <div class="border-l border-gray-800 pl-3"><p class="text-white text-sm font-bold">LVN°</p><p class="text-[11px] mt-2">v.2.8</p></div>
+    </div>
+
+    <main class="w-full relative z-10 px-6 lg:px-8">
+        <div class="w-full max-w-5xl mx-auto space-y-8">
+            <!-- Header -->
+            <div>
+                <div class="text-cyan-400 text-xs font-mono mb-2" data-i18n="project-label">⟡ SELF-LEARNING PROJECT / FRONTEND</div>
+                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tighter bg-gradient-to-r from-cyan-400 via-green-400 to-purple-400 bg-clip-text text-transparent">TY FOODS WEB ORDER</h1>
+                <p class="text-gray-400 text-sm mt-2" data-i18n="tagline">QR Table Ordering · Customizable Desserts · PWA‑like Experience</p>
+            </div>
+
+            <!-- Role & Objective -->
+            <div class="project-card p-6">
+                <h2 class="text-white text-xl font-bold flex items-center gap-2 mb-3"><span class="text-cyan-400">🎯</span> <span data-i18n="role-title">Role & Objective</span></h2>
+                <p class="text-gray-300 text-sm leading-relaxed" data-i18n="role-desc"><strong>Role:</strong> Full-stack Developer (Self-learning Project)<br><strong>Goal:</strong> Build a complete digital ordering system for a dessert shop – customers scan QR code, select items with full customization (size, sweetness, temperature, toppings), add to cart, and send order directly to kitchen. The system also includes feedback/rating and bilingual interface (EN/VI).</p>
+                <p class="text-gray-300 text-sm mt-3" data-i18n="origin-desc">Inspired by real‑world needs of small F&B businesses, this project demonstrates a production‑ready frontend with zero backend cost (uses localStorage for data persistence).</p>
+            </div>
+
+            <!-- Skills gained -->
+            <div class="project-card p-6">
+                <h2 class="text-white text-xl font-bold flex items-center gap-2 mb-3"><span class="text-cyan-400">⚙️</span> <span data-i18n="skills-title">Skills gained</span></h2>
+                <ul class="list-disc list-inside text-gray-300 text-sm space-y-2">
+                    <li data-i18n="skill1"><strong>Frontend Architecture</strong> – Designed a fully responsive PWA‑style web app with multi‑view navigation (Home / Menu / Cart / Success).</li>
+                    <li data-i18n="skill2"><strong>Dynamic Product Customization</strong> – Implemented real‑time price calculation for size options, topping selection, and quantity.</li>
+                    <li data-i18n="skill3"><strong>LocalStorage & State Management</strong> – Managed cart, order history, and pending feedback without a backend – perfect for offline demo and small shops.</li>
+                    <li data-i18n="skill4"><strong>Bilingual UI (EN/VI)</strong> – Built a complete language toggle with all UI text and product descriptions translated.</li>
+                    <li data-i18n="skill5"><strong>QR Table Order Flow</strong> – Simulated “order at table” experience: guest enters name/table, adds items, sends order to kitchen (simulated).</li>
+                    <li data-i18n="skill6"><strong>Feedback & Rating System</strong> – Allowed customers to rate past orders, select specific items, and submit detailed feedback.</li>
+                </ul>
+            </div>
+
+            <!-- Key features -->
+            <div class="project-card p-6">
+                <h2 class="text-white text-xl font-bold flex items-center gap-2 mb-3"><span class="text-cyan-400">✨</span> <span data-i18n="features-title">Key features</span></h2>
+                <ul class="list-disc list-inside text-gray-300 text-sm space-y-2">
+                    <li data-i18n="feat1">📱 Mobile‑first design, smooth scrolling, keyboard‑aware layout</li>
+                    <li data-i18n="feat2">🍨 30+ products across 4 categories (Base, Special, Snacks, Others)</li>
+                    <li data-i18n="feat3">🎨 Customization: size (S/M/L), sweetness (4 levels), temperature (ice/hot), 27+ toppings</li>
+                    <li data-i18n="feat4">🧾 Cart review with detailed item breakdown, kitchen note field</li>
+                    <li data-i18n="feat5">📋 Order confirmation modal before sending to kitchen</li>
+                    <li data-i18n="feat6">⭐ Post‑order rating: choose order from history, rate each item, submit issues & notes</li>
+                    <li data-i18n="feat7">🌍 Full English/Vietnamese toggle with persistent language preference</li>
+                    <li data-i18n="feat8">🖼️ Twemoji integration for consistent cross‑platform emoji display</li>
+                </ul>
+            </div>
+
+            <!-- Screenshots (3 images) -->
+            <div class="project-card p-6">
+                <h2 class="text-white text-xl font-bold flex items-center gap-2 mb-4"><span class="text-cyan-400">📸</span> <span data-i18n="screenshots-title">System preview</span></h2>
+                <div class="screenshot-grid">
+                    <div class="screenshot-item" data-full-img="tyfoods1.jpg">
+                        <img src="tyfoods0.jpg" alt="Home & Hero" onerror="this.src='https://placehold.co/600x400/111318/00e5ff?text=Home+%26+Hero'">
+                    </div>
+                    <div class="screenshot-item" data-full-img="tyfoods2.jpg">
+                        <img src="tyfoods1.jpg" alt="Product modal" onerror="this.src='https://placehold.co/600x400/111318/69ffb4?text=Product+Customization'">
+                    </div>
+                    <div class="screenshot-item" data-full-img="tyfoods3.jpg">
+                        <img src="tyfoods2.jpg" alt="Cart & checkout" onerror="this.src='https://placehold.co/600x400/111318/bf93ff?text=Cart+%26+Checkout'">
+                    </div>
+                     <div class="screenshot-item" data-full-img="tyfoods2.jpg">
+                        <img src="tyfoods3.jpg" alt="Product modal" onerror="this.src='https://placehold.co/600x400/111318/69ffb4?text=Product+Customization'">
+                    </div>
+                    <div class="screenshot-item" data-full-img="tyfoods3.jpg">
+                        <img src="tyfoods4.jpg" alt="Cart & checkout" onerror="this.src='https://placehold.co/600x400/111318/bf93ff?text=Cart+%26+Checkout'">
+                    </div>
+                      <div class="screenshot-item" data-full-img="tyfoods2.jpg">
+                        <img src="tyfoods5.jpg" alt="Product modal" onerror="this.src='https://placehold.co/600x400/111318/69ffb4?text=Product+Customization'">
+                    </div>
+                    <div class="screenshot-item" data-full-img="tyfoods3.jpg">
+                        <img src="tyfoods6.jpg" alt="Cart & checkout" onerror="this.src='https://placehold.co/600x400/111318/bf93ff?text=Cart+%26+Checkout'">
+                    </div>
+                </div>
+             
+            </div>
+
+      <div class="project-card p-6">
+    <h2 class="text-white text-xl font-bold flex items-center gap-2 mb-3">
+        <span class="text-cyan-400">🔗</span> 
+        <span data-i18n="links-title">Live Demo & Source Code</span>
+    </h2>
+    <p class="text-gray-300 text-sm mb-5" data-i18n="github-desc">
+        The full project (HTML/CSS/JS) is available on GitHub. It includes the complete frontend with all customization logic, order management, and bilingual support. Check out the live deployment below!
+    </p>
+    
+    <div class="flex flex-wrap items-center gap-4">
+        
+        <a href="https://orderche.vercel.app" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-400 to-cyan-500 text-slate-900 px-6 py-2.5 rounded-full text-sm font-bold shadow-lg shadow-cyan-500/30 hover:scale-105 transition-transform duration-300">
+            🚀 <span data-i18n="demo-btn">VIEW LIVE DEMO</span>
+        </a>
+
+        <a href="https://github.com/levietngocc/orderche" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 bg-cyan-400/10 border border-cyan-400 text-cyan-400 px-6 py-2.5 rounded-full text-sm font-mono hover:bg-cyan-400/20 transition-colors duration-300">
+            🐙 <span data-i18n="github-btn">SOURCE CODE →</span>
+        </a>
+
+    </div>
+</div>
+        </div>
+    </main>
+
+    <!-- Image Modal -->
+    <div id="imageModal" class="image-modal" onclick="closeModal()">
+        <div class="modal-close" onclick="closeModal()">✕</div>
+        <img id="modalImg" src="" alt="Expanded view">
+    </div>
+
+    <!-- Bottom bar -->
+    <footer class="fixed bottom-0 left-0 w-full z-50 flex justify-between items-center px-6 lg:px-10 py-2.5 text-[10px] lg:text-xs text-gray-500 uppercase tracking-wider bg-black/80 backdrop-blur-md border-t border-gray-800/50 font-mono">
+        <p class="flex items-center gap-2"><span class="text-white font-bold">LVN°</span> <span class="text-gray-600">|</span> <span id="footer-status" data-i18n="footer-status">PROJECT</span> :: 2026</p>
+        <div class="flex gap-4"><p class="cursor-pointer hover:text-white transition">🔍 Search [ O ]</p><p class="hidden lg:block text-gray-600">⏣ ID: 0xLVN</p></div>
+    </footer>
+
+    <script>
+        let currentLang = 'en';
+
+        const translations = {
+            en: {
+                'menu01': '01 THE SHIFT', 'menu02': '02 EXPERTISE', 'menu03': '03 E‑COMMERCE CRM', 'menu04': '04 REPAIR SYS', 'menu05': '05 TY FOODS', 'menu06': '06 CHEATSHEET',
+                'brand-sub': 'IT DIGITALIZATION / SOFTWARE ENGINEER',
+                'project-label': '⟡ SELF-LEARNING PROJECT / FRONTEND',
+                'tagline': 'QR Table Ordering · Customizable Desserts · PWA‑like Experience',
+                'role-title': 'Role & Objective',
+                'role-desc': '<strong>Role:</strong> Full-stack Developer (Self-learning Project)<br><strong>Goal:</strong> Build a complete digital ordering system for a dessert shop – customers scan QR code, select items with full customization (size, sweetness, temperature, toppings), add to cart, and send order directly to kitchen. The system also includes feedback/rating and bilingual interface (EN/VI).',
+                'origin-desc': 'Inspired by real‑world needs of small F&B businesses, this project demonstrates a production‑ready frontend with zero backend cost (uses localStorage for data persistence).',
+                'skills-title': 'Skills gained',
+                'skill1': '<strong>Frontend Architecture</strong> – Designed a fully responsive PWA‑style web app with multi‑view navigation (Home / Menu / Cart / Success).',
+                'skill2': '<strong>Dynamic Product Customization</strong> – Implemented real‑time price calculation for size options, topping selection, and quantity.',
+                'skill3': '<strong>LocalStorage & State Management</strong> – Managed cart, order history, and pending feedback without a backend – perfect for offline demo and small shops.',
+                'skill4': '<strong>Bilingual UI (EN/VI)</strong> – Built a complete language toggle with all UI text and product descriptions translated.',
+                'skill5': '<strong>QR Table Order Flow</strong> – Simulated “order at table” experience: guest enters name/table, adds items, sends order to kitchen (simulated).',
+                'skill6': '<strong>Feedback & Rating System</strong> – Allowed customers to rate past orders, select specific items, and submit detailed feedback.',
+                'features-title': 'Key features',
+                'feat1': '📱 Mobile‑first design, smooth scrolling, keyboard‑aware layout',
+                'feat2': '🍨 30+ products across 4 categories (Base, Special, Snacks, Others)',
+                'feat3': '🎨 Customization: size (S/M/L), sweetness (4 levels), temperature (ice/hot), 27+ toppings',
+                'feat4': '🧾 Cart review with detailed item breakdown, kitchen note field',
+                'feat5': '📋 Order confirmation modal before sending to kitchen',
+                'feat6': '⭐ Post‑order rating: choose order from history, rate each item, submit issues & notes',
+                'feat7': '🌍 Full English/Vietnamese toggle with persistent language preference',
+                'feat8': '🖼️ Twemoji integration for consistent cross‑platform emoji display',
+                'screenshots-title': 'System preview',
+                'cap1': '1. Home screen & trending items',
+                'cap2': '2. Product customization (size, sweetness, toppings)',
+                'cap3': '3. Cart, order confirmation & rating modal',
+                'img-note': '※ Replace tyfoods1.jpg, tyfoods2.jpg, tyfoods3.jpg with your actual screenshots.',
+                'github-title': 'Source code',
+                'github-desc': 'The full project (HTML/CSS/JS) is available on GitHub. It includes the complete frontend with all customization logic, order management, and bilingual support – ready to be deployed as a static website.',
+                'github-btn': 'VIEW ON GITHUB →',
+                'github-note': '※ Replace the link with your actual repository URL.',
+                'footer-status': 'PROJECT'
+            },
+            vi: {
+                'menu01': '01 SỰ CHUYỂN MÌNH', 'menu02': '02 CHUYÊN MÔN', 'menu03': '03 E‑COMMERCE CRM', 'menu04': '04 HỆ THỐNG SỬA CHỮA', 'menu05': '05 TY FOODS', 'menu06': '06 CHEATSHEET',
+                'brand-sub': 'CNTT SỐ HÓA / KỸ SƯ PHẦN MỀM',
+                'project-label': '⟡ DỰ ÁN TỰ HỌC / FRONTEND',
+                'tagline': 'Đặt món qua QR · Tùy chỉnh chè · Trải nghiệm như PWA',
+                'role-title': 'Vai trò & Mục tiêu',
+                'role-desc': '<strong>Vai trò:</strong> Full-stack Developer (Dự án tự học)<br><strong>Mục tiêu:</strong> Xây dựng hệ thống đặt món số hóa cho quán chè – khách quét QR, chọn món với tùy chỉnh đầy đủ (size, độ ngọt, nhiệt độ, topping), thêm vào giỏ và gửi đơn trực tiếp đến bếp. Hệ thống cũng bao gồm đánh giá/phản hồi và giao diện song ngữ (EN/VI).',
+                'origin-desc': 'Lấy cảm hứng từ nhu cầu thực tế của các doanh nghiệp F&B nhỏ, dự án này thể hiện một frontend sẵn sàng sản xuất với chi phí backend bằng 0 (dùng localStorage để lưu dữ liệu).',
+                'skills-title': 'Kỹ năng đạt được',
+                'skill1': '<strong>Kiến trúc Frontend</strong> – Thiết kế web app dạng PWA, responsive, điều hướng đa màn (Trang chủ / Menu / Giỏ / Thành công).',
+                'skill2': '<strong>Tùy chỉnh sản phẩm động</strong> – Tính giá thời gian thực theo size, topping và số lượng.',
+                'skill3': '<strong>LocalStorage & Quản lý trạng thái</strong> – Quản lý giỏ hàng, lịch sử đơn, phản hồi chưa đánh giá mà không cần backend – phù hợp demo offline và cửa hàng nhỏ.',
+                'skill4': '<strong>Giao diện song ngữ (EN/VI)</strong> – Xây dựng nút chuyển ngôn ngữ hoàn chỉnh, tất cả văn bản và mô tả sản phẩm được dịch.',
+                'skill5': '<strong>Luồng đặt món tại bàn QR</strong> – Mô phỏng trải nghiệm “order at table”: khách nhập tên/số bàn, chọn món, gửi đơn đến bếp (mô phỏng).',
+                'skill6': '<strong>Hệ thống đánh giá & sao</strong> – Cho phép khách đánh giá đơn cũ, chọn từng món cụ thể, gửi góp ý và ghi chú.',
+                'features-title': 'Tính năng chính',
+                'feat1': '📱 Thiết kế ưu tiên mobile, cuộn mượt, bố cục thích ứng bàn phím',
+                'feat2': '🍨 30+ món qua 4 danh mục (Base, Đặc biệt, Ăn vặt, Khác)',
+                'feat3': '🎨 Tùy chỉnh: size (S/M/L), độ ngọt (4 mức), nhiệt độ (lạnh/nóng), 27+ topping',
+                'feat4': '🧾 Giỏ hàng chi tiết kèm phân tích từng món, trường ghi chú cho bếp',
+                'feat5': '📋 Modal xác nhận đơn trước khi gửi bếp',
+                'feat6': '⭐ Đánh giá sau khi đặt: chọn đơn từ lịch sử, chấm sao từng món, gửi vấn đề & ghi chú',
+                'feat7': '🌍 Chuyển đổi Anh/Việt toàn diện, lưu ngôn ngữ ưa thích',
+                'feat8': '🖼️ Tích hợp Twemoji để hiển thị emoji nhất quán trên mọi nền tảng',
+                'screenshots-title': 'Hình ảnh hệ thống',
+                'cap1': '1. Màn hình chính & món trending',
+                'cap2': '2. Tùy chỉnh sản phẩm (size, độ ngọt, topping)',
+                'cap3': '3. Giỏ hàng, xác nhận đơn & modal đánh giá',
+                'img-note': '※ Thay tyfoods1.jpg, tyfoods2.jpg, tyfoods3.jpg bằng ảnh chụp màn hình thật của bạn.',
+                'github-title': 'Mã nguồn',
+                'github-desc': 'Toàn bộ dự án (HTML/CSS/JS) có sẵn trên GitHub. Bao gồm frontend hoàn chỉnh với logic tùy chỉnh, quản lý đơn hàng và hỗ trợ song ngữ – sẵn sàng triển khai dưới dạng website tĩnh.',
+                'github-btn': 'XEM TRÊN GITHUB →',
+                'github-note': '※ Thay đường dẫn bằng URL repository thật của bạn.',
+                'footer-status': 'DỰ ÁN'
+            }
+        };
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'en' ? 'vi' : 'en';
+            applyTranslations();
+            const btn = document.getElementById('lang-toggle');
+            btn.innerHTML = currentLang === 'en' ? '<span class="text-white font-semibold">[ EN ]</span> <span class="text-gray-500">/ VI</span>' : '<span class="text-gray-500">EN /</span> <span class="text-white font-semibold">[ VI ]</span>';
+            document.getElementById('brand-sub').innerText = translations[currentLang]['brand-sub'];
+        }
+
+        function applyTranslations() {
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[currentLang][key]) {
+                    if ((key === 'role-desc' || key === 'origin-desc' || key.startsWith('skill') || key.startsWith('feat')) && el.tagName !== 'PRE') {
+                        el.innerHTML = translations[currentLang][key];
+                    } else {
+                        el.innerText = translations[currentLang][key];
+                    }
+                }
+            });
+            document.getElementById('footer-status').innerText = translations[currentLang]['footer-status'];
+        }
+
+        // Image modal
+        const modal = document.getElementById('imageModal');
+        const modalImg = document.getElementById('modalImg');
+        function openModal(imgSrc) { modalImg.src = imgSrc; modal.classList.add('active'); document.body.style.overflow = 'hidden'; }
+        function closeModal() { modal.classList.remove('active'); document.body.style.overflow = ''; }
+        document.querySelectorAll('.screenshot-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                const img = item.querySelector('img');
+                let src = img.src;
+                if (src.includes('placehold.co')) src = item.getAttribute('data-full-img') || src;
+                openModal(src);
+            });
+        });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape' && modal.classList.contains('active')) closeModal(); });
+
+        // GitHub link placeholder alert
+        const githubLink = document.getElementById('github-link');
+        githubLink.addEventListener('click', (e) => {
+            if (githubLink.href.includes('yourusername')) {
+                e.preventDefault();
+                alert('📌 Replace the GitHub link with your actual repository URL.');
+            }
+        });
+
+        window.toggleLanguage = toggleLanguage;
+        applyTranslations();
+    </script>
+</body>
+</html>

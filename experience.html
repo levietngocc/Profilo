@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>LVN° | Experience & Skills</title>
+    <link rel="icon" type="image/jpeg" href="logo.jpg">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', monospace; background: #030303; scrollbar-width: thin; }
+        body::-webkit-scrollbar { width: 5px; }
+        body::-webkit-scrollbar-track { background: #0a0a0a; }
+        body::-webkit-scrollbar-thumb { background: #2e2e2e; border-radius: 10px; }
+        .bg-grain { background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.035'/%3E%3C/svg%3E"); }
+        .vertical-text { writing-mode: vertical-rl; transform: rotate(180deg); letter-spacing: 0.2em; }
+        .glow-border { background: rgba(5,5,5,0.65); backdrop-filter: blur(8px); border-radius: 24px; border: 1px solid rgba(75,85,99,0.5); transition: all 0.3s ease; }
+        .scanline { pointer-events: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: repeating-linear-gradient(0deg, rgba(0,0,0,0.02) 0px, rgba(0,0,0,0.02) 2px, transparent 2px, transparent 6px); z-index: 40; }
+        .skill-bar-bg { background: #1e1e1e; border-radius: 20px; overflow: hidden; height: 6px; }
+        .skill-bar-fill { height: 6px; background: linear-gradient(90deg, #9ca3af, #e5e7eb); border-radius: 20px; }
+        .cert-placeholder { background: #111; border: 1px dashed #3f3f46; border-radius: 12px; padding: 0.5rem 1rem; font-family: monospace; font-size: 0.7rem; display: inline-block; cursor: pointer; transition: 0.2s; }
+        .cert-placeholder:hover { border-color: #9ca3af; background: #1a1a1a; }
+        .timeline-item { border-left: 1px solid #2a2a2a; padding-left: 20px; margin-left: 5px; }
+        /* Header same as index */
+        .main-header {
+            position: fixed;
+            top: 1.5rem;
+            left: 0;
+            right: 0;
+            z-index: 30;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+            padding: 0 1.5rem;
+        }
+        .header-left { flex-shrink: 0; }
+        .header-center { flex: 1; display: flex; justify-content: center; }
+        .header-right { flex-shrink: 0; display: flex; align-items: center; gap: 1rem; }
+        .top-menu {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.25rem;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(8px);
+            border-radius: 40px;
+            padding: 0.25rem 0.5rem;
+            border: 1px solid #2a2a2a;
+        }
+        .top-menu a {
+            padding: 0.4rem 0.9rem;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            letter-spacing: 0.03em;
+            transition: all 0.2s;
+            color: #9ca3af;
+            white-space: nowrap;
+            text-decoration: none;
+        }
+        .top-menu a:hover { background: rgba(255,255,255,0.08); color: white; }
+        .top-menu a.active { background: rgba(255,255,255,0.12); color: white; }
+        @media (max-width: 768px) {
+            .main-header { position: relative; top: 0; flex-direction: column; align-items: stretch; margin-bottom: 1rem; padding-top: 1rem; }
+            .header-center { order: 3; margin-top: 0.5rem; }
+            .top-menu { justify-content: center; flex-wrap: wrap; }
+        }
+        /* Vertical centering for main content */
+        .centered-main {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 6rem 1.5rem 5rem;
+        }
+        @media (min-width: 1024px) {
+            .centered-main {
+                padding: 0 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body class="bg-black text-gray-200 antialiased overflow-x-hidden relative">
+
+    <div class="fixed inset-0 z-0 bg-grain opacity-40 pointer-events-none"></div>
+    <div class="fixed inset-0 z-0 bg-[radial-gradient(circle_at_30%_10%,_rgba(30,30,40,0.4),transparent_70%)] pointer-events-none"></div>
+    <div class="scanline"></div>
+
+    <!-- Same header -->
+    <div class="main-header">
+        <div class="header-left">
+            <div class="group cursor-pointer">
+                <p class="text-white font-bold text-base lg:text-xl tracking-wide">LE VIET NGOC</p>
+                <p id="brand-sub" class="text-gray-400 text-[11px] lg:text-xs tracking-[0.2em] uppercase mt-0.5">IT DIGITALIZATION / SOFTWARE ENGINEER</p>
+                <div class="w-8 h-px bg-gray-700 group-hover:w-12 transition-all duration-300 mt-2"></div>
+            </div>
+        </div>
+        <div class="header-center">
+            <div class="top-menu">
+                <a href="index.html" data-i18n="menu01">01 THE SHIFT</a>
+                <a href="experience.html" class="active" data-i18n="menu02">02 EXPERTISE</a>
+                <a href="project-crm.html" data-i18n="menu03">03 E‑COMMERCE CRM</a>
+                <a href="project-repair.html" data-i18n="menu04">04 REPAIR SYS</a>
+                <a href="project-tyfoods.html" data-i18n="menu05">05 TY FOODS</a>
+                <a href="Html.html" data-i18n="menu06">06 CHEATSHEET</a>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="flex gap-3 text-xs lg:text-sm font-mono">
+                <span class="text-gray-300 border-b border-gray-600 pb-0.5">#HARDWARE</span>
+                <span class="text-gray-500 hover:text-gray-300 transition">#SOFTWARE</span>
+            </div>
+            <button id="lang-toggle" onclick="toggleLanguage()" class="border border-gray-700 bg-black/40 backdrop-blur-md px-3 py-1.5 lg:px-4 lg:py-2 rounded-full text-xs font-mono tracking-wider hover:border-gray-400 transition-all duration-300 shadow-lg">
+                <span class="text-white font-semibold">[ EN ]</span> <span class="text-gray-500">/ VI</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="hidden lg:block fixed left-8 top-1/2 -translate-y-1/2 z-20 vertical-text uppercase tracking-[0.8em] text-gray-800 text-sm font-bold mix-blend-difference">PORTFOLIO</div>
+    <div class="hidden lg:block fixed right-8 top-1/2 -translate-y-1/2 z-20 text-gray-700 text-xs font-mono">
+        <div class="border-l border-gray-800 pl-3"><p class="text-white text-sm font-bold">LVN°</p><p class="text-[11px] mt-2">v.2.8</p></div>
+    </div>
+
+    <!-- Main content - vertically centered -->
+    <main class="centered-main w-full">
+        <div class="w-full max-w-7xl mx-auto">
+            <div class="grid lg:grid-cols-3 gap-10 lg:gap-12">
+                <!-- Left 2/3 columns -->
+                <div class="lg:col-span-2 space-y-8">
+                    <div>
+                        <p class="text-white text-xl font-semibold mb-2" data-i18n="summary-title">Engineering mindset, intern experience</p>
+                        <p class="text-gray-400 text-sm leading-relaxed" data-i18n="summary-text">I'm a Software Engineering student with hands‑on experience from a PC shop internship. I built a digital repair management system that replaced messy paper records – saving the shop hours every week. I'm now looking for my first full‑time role where I can combine web development, automation, and hardware understanding.</p>
+                    </div>
+                    <div>
+                        <h2 class="text-white text-lg font-bold border-b border-gray-700 pb-2 mb-5 flex items-center gap-2">
+                            <span class="text-cyan-400">▸</span> <span data-i18n="skills-title">Core Competencies</span>
+                        </h2>
+                        <div class="grid sm:grid-cols-2 gap-5">
+                            <div class="bg-black/40 border border-gray-800 rounded-xl p-4">
+                                <p class="text-cyan-300 font-bold text-sm mb-2" data-i18n="skill1-title">SOFTWARE & DATA LOGIC</p>
+                                <div class="space-y-2 text-xs">
+                                    <div><span class="text-gray-300" data-i18n="skill1-web">Web:</span> ReactJS, Node.js</div>
+                                    <div><span class="text-gray-300" data-i18n="skill1-data">Data/Automation:</span> Python, SQL, Power Platform</div>
+                                    <div class="skill-bar-bg mt-2"><div class="skill-bar-fill" style="width: 80%"></div></div>
+                                    <div class="text-gray-500 text-[10px] mt-1" data-i18n="skill1-level">80% · building real projects</div>
+                                </div>
+                            </div>
+                            <div class="bg-black/40 border border-gray-800 rounded-xl p-4">
+                                <p class="text-cyan-300 font-bold text-sm mb-2" data-i18n="skill2-title">HARDWARE CORE</p>
+                                <div class="space-y-2 text-xs">
+                                    <div><span class="text-gray-300" data-i18n="skill2-diagnosis">Diagnosis:</span> Mainboard, flood recovery</div>
+                                    <div><span class="text-gray-300" data-i18n="skill2-precision">Precision:</span> CPU pin restoring, assembly</div>
+                                    <div class="skill-bar-bg mt-2"><div class="skill-bar-fill" style="width: 85%"></div></div>
+                                    <div class="text-gray-500 text-[10px] mt-1" data-i18n="skill2-level">85% · from intern work</div>
+                                </div>
+                            </div>
+                            <div class="bg-black/40 border border-gray-800 rounded-xl p-4">
+                                <p class="text-cyan-300 font-bold text-sm mb-2" data-i18n="skill3-title">AI COLLABORATION</p>
+                                <div class="space-y-2 text-xs">
+                                    <div><span class="text-gray-300" data-i18n="skill3-tools">Tools:</span> Gemini, ChatGPT, Claude</div>
+                                    <div><span class="text-gray-300" data-i18n="skill3-methods">Methods:</span> Pair‑programming, debugging</div>
+                                    <div class="skill-bar-bg mt-2"><div class="skill-bar-fill" style="width: 70%"></div></div>
+                                    <div class="text-gray-500 text-[10px] mt-1" data-i18n="skill3-level">70% · efficient problem‑solving</div>
+                                </div>
+                            </div>
+                            <div class="bg-black/40 border border-gray-800 rounded-xl p-4">
+                                <p class="text-cyan-300 font-bold text-sm mb-2" data-i18n="skill4-title">OS & INFRASTRUCTURE</p>
+                                <div class="space-y-2 text-xs">
+                                    <div><span class="text-gray-300" data-i18n="skill4-os">Linux:</span> Arch, Fedora (customization)</div>
+                                    <div><span class="text-gray-300" data-i18n="skill4-vcs">Version control:</span> Git, GitHub</div>
+                                    <div class="skill-bar-bg mt-2"><div class="skill-bar-fill" style="width: 75%"></div></div>
+                                    <div class="text-gray-500 text-[10px] mt-1" data-i18n="skill4-level">75% · daily environment</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h2 class="text-white text-lg font-bold border-b border-gray-700 pb-2 mb-5 flex items-center gap-2">
+                            <span class="text-cyan-400">🏆</span> <span data-i18n="achievements-title">Achievements & Credentials</span>
+                        </h2>
+                        <div class="space-y-5">
+                            <div class="timeline-item">
+                                <div class="flex flex-wrap justify-between items-start gap-2 mb-1">
+                                    <div>
+                                        <p class="text-white font-bold" data-i18n="ach1-title">[2025] NATIONAL FINALIST — Euréka XXVII</p>
+                                        <p class="text-gray-400 text-xs" data-i18n="ach1-desc">National Student Scientific Research (Top finalist)</p>
+                                    </div>
+                                    <div class="cert-placeholder text-gray-400 text-[11px]" data-img="img1.jpg">📄 <span data-i18n="view-cert">VIEW CERTIFICATE</span></div>
+                                </div>
+                                <p class="text-gray-500 text-[11px] mt-1" data-i18n="ach1-note">Research on applied computing & digital transformation.</p>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="flex flex-wrap justify-between items-start gap-2 mb-1">
+                                    <div>
+                                        <p class="text-white font-bold" data-i18n="ach2-title">[2025] SECOND PRIZE — Student IT Research</p>
+                                        <p class="text-gray-400 text-xs" data-i18n="ach2-desc">Duy Tan University</p>
+                                    </div>
+                                    <div class="cert-placeholder text-gray-400 text-[11px]" data-img="img2.jpg">📄 <span data-i18n="view-cert">VIEW CERTIFICATE</span></div>
+                                </div>
+                                <p class="text-gray-500 text-[11px] mt-1" data-i18n="ach2-note">Awarded for software + hardware integration project.</p>
+                            </div>
+                            <div class="timeline-item opacity-80">
+                                <div class="flex flex-wrap justify-between items-start gap-2 mb-1">
+                                    <div>
+                                        <p class="text-white font-bold" data-i18n="ach3-title">[MAY 2026] TOEIC 400+ PREPARATION</p>
+                                        <p class="text-gray-400 text-xs" data-i18n="ach3-desc">Target: technical docs & graduation requirement</p>
+                                    </div>
+                                    <div class="text-amber-500 text-[10px] bg-amber-950/30 px-2 py-0.5 rounded-full" data-i18n="in-progress">⏳ IN PROGRESS</div>
+                                </div>
+                                <div class="skill-bar-bg w-full max-w-[200px] mt-2"><div class="skill-bar-fill" style="width: 38%"></div></div>
+                                <p class="text-gray-500 text-[11px] mt-1" data-i18n="ach3-note">38% · exam scheduled May 2026</p>
+                            </div>
+                        </div>
+                        <p class="text-gray-500 text-[10px] italic mt-4" data-i18n="cert-note">※ Click on any certificate placeholder to replace with actual image (img1, img2, img3)</p>
+                    </div>
+                </div>
+                <!-- Right sidebar -->
+                <div class="space-y-6">
+                    <div class="glow-border p-5">
+                        <p class="text-white font-bold text-lg mb-2" data-i18n="quick-title">⚡ Quick Profile</p>
+                        <div class="w-12 h-px bg-gray-600 mb-4"></div>
+                        <p class="text-gray-300 text-sm leading-relaxed" data-i18n="quick-text">Software Engineering student who thinks in systems — from circuits to cloud. I don't just write code; I solve real operational bottlenecks.</p>
+                        <div class="mt-4 flex flex-wrap gap-2">
+                            <span class="text-[10px] bg-gray-800/60 px-2 py-1 rounded-full" data-i18n="tag1">Root‑cause analysis</span>
+                            <span class="text-[10px] bg-gray-800/60 px-2 py-1 rounded-full" data-i18n="tag2">Digital transformation</span>
+                            <span class="text-[10px] bg-gray-800/60 px-2 py-1 rounded-full" data-i18n="tag3">Full‑stack mindset</span>
+                        </div>
+                    </div>
+                    <div class="border border-gray-800 rounded-xl p-5 bg-black/30">
+                        <p class="text-cyan-400 text-sm font-mono mb-2" data-i18n="focus-title">→ Currently focused on</p>
+                        <ul class="list-disc list-inside text-xs text-gray-300 space-y-1">
+                            <li data-i18n="focus1">Power Platform + SQL automation</li>
+                            <li data-i18n="focus2">ReactJS / Node.js full‑stack apps</li>
+                            <li data-i18n="focus3">AI‑assisted development workflows</li>
+                            <li data-i18n="focus4">TOEIC preparation for technical English</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bottom bar -->
+    <div class="fixed bottom-0 left-0 w-full z-30 flex justify-between items-center px-6 lg:px-10 py-2.5 text-[10px] lg:text-xs text-gray-500 uppercase tracking-wider bg-black/80 backdrop-blur-md border-t border-gray-800/50 font-mono">
+        <p class="flex items-center gap-2"><span class="text-white font-bold">LVN°</span> <span class="text-gray-600">|</span> <span id="footer-status" data-i18n="footer-status">EXPERIENCE</span> :: 2026</p>
+        <div class="flex gap-4"><p class="cursor-pointer hover:text-white transition-all duration-200 flex items-center gap-1">🔍 Search [ O ]</p><p class="hidden lg:block text-gray-600">⏣ ID: 0xLVN</p></div>
+    </div>
+
+    <script>
+        let currentLang = 'en';
+
+        const translations = {
+            en: {
+                'menu01': '01 THE SHIFT', 'menu02': '02 EXPERTISE', 'menu03': '03 E‑COMMERCE CRM', 'menu04': '04 REPAIR SYS', 'menu05': '05 TY FOODS', 'menu06': '06 CHEATSHEET',
+                'summary-title': 'Engineering mindset, intern experience',
+                'summary-text': "I'm a Software Engineering student with hands‑on experience from a PC shop internship. I built a digital repair management system that replaced messy paper records – saving the shop hours every week. I'm now looking for my first full‑time role where I can combine web development, automation, and hardware understanding.",
+                'skills-title': 'Core Competencies',
+                'skill1-title': 'SOFTWARE & DATA LOGIC', 'skill1-web': 'Web:', 'skill1-data': 'Data/Automation:', 'skill1-level': '80% · building real projects',
+                'skill2-title': 'HARDWARE CORE', 'skill2-diagnosis': 'Diagnosis:', 'skill2-precision': 'Precision:', 'skill2-level': '85% · from intern work',
+                'skill3-title': 'AI COLLABORATION', 'skill3-tools': 'Tools:', 'skill3-methods': 'Methods:', 'skill3-level': '70% · efficient problem‑solving',
+                'skill4-title': 'OS & INFRASTRUCTURE', 'skill4-os': 'Linux:', 'skill4-vcs': 'Version control:', 'skill4-level': '75% · daily environment',
+                'achievements-title': 'Achievements & Credentials',
+                'ach1-title': '[2025] NATIONAL FINALIST — Euréka XXVII', 'ach1-desc': 'National Student Scientific Research (Top finalist)', 'ach1-note': 'Research on applied computing & digital transformation.',
+                'ach2-title': '[2025] SECOND PRIZE — Student IT Research', 'ach2-desc': 'Duy Tan University', 'ach2-note': 'Awarded for software + hardware integration project.',
+                'ach3-title': '[MAY 2026] TOEIC 400+ PREPARATION', 'ach3-desc': 'Target: technical docs & graduation requirement', 'in-progress': '⏳ IN PROGRESS', 'ach3-note': '38% · exam scheduled May 2026',
+                'view-cert': 'VIEW CERTIFICATE', 'cert-note': '※ Click on any certificate placeholder to replace with actual image (img1, img2, img3)',
+                'quick-title': '⚡ Quick Profile', 'quick-text': 'Software Engineering student who thinks in systems — from circuits to cloud. I don\'t just write code; I solve real operational bottlenecks.',
+                'tag1': 'Root‑cause analysis', 'tag2': 'Digital transformation', 'tag3': 'Full‑stack mindset',
+                'focus-title': '→ Currently focused on', 'focus1': 'Power Platform + SQL automation', 'focus2': 'ReactJS / Node.js full‑stack apps', 'focus3': 'AI‑assisted development workflows', 'focus4': 'TOEIC preparation for technical English',
+                'footer-status': 'EXPERIENCE', 'brand-sub': 'IT DIGITALIZATION / SOFTWARE ENGINEER'
+            },
+            vi: {
+                'menu01': '01 SỰ CHUYỂN MÌNH', 'menu02': '02 CHUYÊN MÔN', 'menu03': '03 E‑COMMERCE CRM', 'menu04': '04 HỆ THỐNG SỬA CHỮA', 'menu05': '05 TY FOODS','menu06': '06 CHEATSHEET',
+                'summary-title': 'Tư duy kỹ thuật, kinh nghiệm thực tập',
+                'summary-text': 'Tôi là sinh viên Kỹ thuật Phần mềm đã có trải nghiệm thực tế tại một tiệm sửa chữa PC. Tôi đã xây dựng hệ thống quản lý sửa chữa số hóa thay thế giấy tờ thủ công – giúp tiệm tiết kiệm hàng giờ mỗi tuần. Tôi đang tìm kiếm công việc đầu tiên để kết hợp phát triển web, tự động hóa và hiểu biết về phần cứng.',
+                'skills-title': 'Năng lực cốt lõi',
+                'skill1-title': 'PHẦN MỀM & DỮ LIỆU', 'skill1-web': 'Web:', 'skill1-data': 'Dữ liệu/Tự động:', 'skill1-level': '80% · đang xây dựng dự án thật',
+                'skill2-title': 'PHẦN CỨNG', 'skill2-diagnosis': 'Chẩn đoán:', 'skill2-precision': 'Gia công chính xác:', 'skill2-level': '85% · từ công việc thực tập',
+                'skill3-title': 'CỘNG TÁC VỚI AI', 'skill3-tools': 'Công cụ:', 'skill3-methods': 'Phương pháp:', 'skill3-level': '70% · giải quyết vấn đề hiệu quả',
+                'skill4-title': 'HỆ ĐIỀU HÀNH & HẠ TẦNG', 'skill4-os': 'Linux:', 'skill4-vcs': 'Quản lý phiên bản:', 'skill4-level': '75% · môi trường hàng ngày',
+                'achievements-title': 'Thành tựu & Chứng chỉ',
+                'ach1-title': '[2025] CHUNG KẾT TOÀN QUỐC — Euréka XXVII', 'ach1-desc': 'Nghiên cứu Khoa học Sinh viên (Chung kết)', 'ach1-note': 'Nghiên cứu về điện toán ứng dụng & chuyển đổi số.',
+                'ach2-title': '[2025] GIẢI NHÌ — Nghiên cứu IT Sinh viên', 'ach2-desc': 'Đại học Duy Tân', 'ach2-note': 'Đạt giải cho dự án tích hợp phần mềm và phần cứng.',
+                'ach3-title': '[THÁNG 5/2026] CHUẨN BỊ TOEIC 400+', 'ach3-desc': 'Mục tiêu: đọc hiểu tài liệu kỹ thuật & đầu ra', 'in-progress': '⏳ ĐANG THỰC HIỆN', 'ach3-note': '38% · thi dự kiến tháng 5/2026',
+                'view-cert': 'XEM CHỨNG CHỈ', 'cert-note': '※ Nhấp vào chỗ trống để thay bằng ảnh chứng chỉ thật (img1, img2, img3)',
+                'quick-title': '⚡ Sơ yếu', 'quick-text': 'Sinh viên Kỹ thuật Phần mềm tư duy hệ thống — từ mạch điện lên đến đám mây. Không chỉ viết code, tôi giải quyết các nút thắt vận hành thực tế.',
+                'tag1': 'Phân tích lỗi gốc rễ', 'tag2': 'Chuyển đổi số', 'tag3': 'Tư duy full‑stack',
+                'focus-title': '→ Tập trung hiện tại', 'focus1': 'Tự động hóa với Power Platform + SQL', 'focus2': 'Ứng dụng full‑stack ReactJS / Node.js', 'focus3': 'Quy trình phát triển hỗ trợ bởi AI', 'focus4': 'Chuẩn bị TOEIC cho tiếng Anh kỹ thuật',
+                'footer-status': 'KINH NGHIỆM', 'brand-sub': 'CNTT SỐ HÓA / KỸ SƯ PHẦN MỀM'
+            }
+        };
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'en' ? 'vi' : 'en';
+            applyTranslations();
+            const btn = document.getElementById('lang-toggle');
+            btn.innerHTML = currentLang === 'en' ? '<span class="text-white font-semibold">[ EN ]</span> <span class="text-gray-500">/ VI</span>' : '<span class="text-gray-500">EN /</span> <span class="text-white font-semibold">[ VI ]</span>';
+            document.getElementById('brand-sub').innerText = translations[currentLang]['brand-sub'];
+        }
+
+        function applyTranslations() {
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[currentLang][key]) el.innerText = translations[currentLang][key];
+            });
+            document.getElementById('footer-status').innerText = translations[currentLang]['footer-status'];
+        }
+
+      document.querySelectorAll('.cert-placeholder').forEach(el => {
+            el.addEventListener('click', (e) => {
+                e.preventDefault(); // Ngăn trình duyệt nhảy lên đầu trang khi bấm href="#"
+                
+                // Lấy tên file ảnh từ thuộc tính data-img (ví dụ: img1.jpg)
+                const imgSrc = el.getAttribute('data-img');
+                if (!imgSrc) return;
+
+                // Tạo lớp phủ mờ màu đen (Overlay)
+                const overlay = document.createElement('div');
+                overlay.className = 'fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm cursor-pointer opacity-0 transition-opacity duration-300';
+                
+                // Tạo thẻ ảnh
+                const img = document.createElement('img');
+                img.src = imgSrc;
+                img.className = 'max-w-[90%] max-h-[90%] rounded border border-gray-700 shadow-2xl scale-95 transition-transform duration-300';
+                
+                // Gắn ảnh vào overlay, gắn overlay vào body
+                overlay.appendChild(img);
+                document.body.appendChild(overlay);
+
+                // Kích hoạt hiệu ứng mờ dần (Fade in) và phóng to nhẹ (Zoom in)
+                setTimeout(() => {
+                    overlay.classList.remove('opacity-0');
+                    img.classList.remove('scale-95');
+                    img.classList.add('scale-100');
+                }, 10);
+
+                // Bấm vào đâu trên màn hình cũng sẽ đóng ảnh lại
+                overlay.addEventListener('click', () => {
+                    overlay.classList.add('opacity-0');
+                    img.classList.remove('scale-100');
+                    img.classList.add('scale-95');
+                    
+                    // Đợi hiệu ứng mờ tắt hẳn rồi mới xóa element khỏi HTML
+                    setTimeout(() => {
+                        overlay.remove();
+                    }, 300);
+                });
+            });
+        });
+
+        window.toggleLanguage = toggleLanguage;
+        applyTranslations();
+    </script>
+</body>
+</html>
